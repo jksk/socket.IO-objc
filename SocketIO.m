@@ -641,8 +641,8 @@ NSString* const SocketIOException = @"SocketIOException";
     // check each returned value (thanks for the input https://github.com/taiyangc)
     BOOL connectionFailed = false;
     NSError* error;
-    
-    _sid = [data objectAtIndex:0];
+	
+	_sid = [data count] ? [data objectAtIndex:0] : @"";
     if ([_sid length] < 1 || [data count] < 4) {
         // did not receive valid data, possibly missing a useSecure?
         connectionFailed = true;
@@ -658,7 +658,7 @@ NSString* const SocketIOException = @"SocketIOException";
         }
         
         // check heartbeat timeout
-        _heartbeatTimeout = [[data objectAtIndex:1] floatValue];
+        _heartbeatTimeout = [data count] > 1 ? [[data objectAtIndex:1] floatValue] : 0.0;
         if (_heartbeatTimeout == 0.0) {
             // couldn't find float value -> fail
             connectionFailed = true;
@@ -672,7 +672,7 @@ NSString* const SocketIOException = @"SocketIOException";
         // index 2 => connection timeout
         
         // get transports
-        NSString *t = [data objectAtIndex:3];
+        NSString *t = [data count] > 3 ? [data objectAtIndex:3] : @"";
         NSArray *transports = [t componentsSeparatedByString:@","];
         DEBUGLOG(@"transports: %@", transports);
         
